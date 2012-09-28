@@ -5,9 +5,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.RectF;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -41,6 +47,57 @@ public class EncounterActivity extends Activity
         }
     }
 
+    class PrepareBearTask extends AsyncTask<int[], Void, Bitmap[]>
+            implements DialogInterface.OnCancelListener
+    {
+        ProgressDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            this.dialog = ProgressDialog.show(EncounterActivity.this,
+                    getString(R.string.prepare_title),
+                    getString(R.string.prepare_message), true, true, this);
+        }
+
+        @Override
+        protected Bitmap[] doInBackground(int[]... args) {
+            try {
+                int[] ids = args[0];
+                Bitmap[] bitmaps = new Bitmap[ids.length];
+                for (int i = 0, I = ids.length; i < I; ++i) {
+                    bitmaps[i] = loadBitmap(ids[i]);
+                }
+                return bitmaps;
+            } catch (InterruptedException e) {
+                return null;
+            }
+        }
+
+        private void closeDialog() {
+            if (this.dialog != null) {
+                this.dialog.dismiss();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            closeDialog();
+            finish();
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap[] bitmaps) {
+            closeDialog();
+            bearBitmaps = bitmaps;
+            setAnimationRunning(true);
+        }
+
+        public void onCancel(DialogInterface dialog) {
+            cancel(true);
+        }
+    };
+
     private boolean bearActive = false;
 
     private boolean bearFocus = false;
@@ -52,6 +109,12 @@ public class EncounterActivity extends Activity
     private int animationFrame = 0;
 
     private Random random = new Random();
+
+    private Bitmap[] bearBitmaps = null;
+
+    private int lastIndex = -1;
+
+    private boolean lastReverse = false;
 
     /** Called when the activity is first created. */
     @Override
@@ -82,27 +145,16 @@ public class EncounterActivity extends Activity
         setBearFocus(hasFocus);
     }
 
-    private void setBearImage(int id, boolean reverse)
+    private void setBearBitmap(Bitmap bitmap, boolean reverse)
     {
-        ImageView v = (ImageView)findViewById(R.id.bear);
-
-        Drawable d = getResources().getDrawable(id);
-
         Matrix m = new Matrix();
-        float w1 = d.getIntrinsicWidth();
-        float h1 = d.getIntrinsicHeight();
-        float w2 = v.getWidth();
-        float h2 = v.getHeight();
-        RectF src = new RectF(0, 0, w1, h1);
-        RectF dst = new RectF(0, 0, w2, h2);
-        m.setRectToRect(src, dst, Matrix.ScaleToFit.CENTER);
         if (reverse) {
             m.postScale(-1f, 1f);
-            m.postTranslate(w2, 0);
+            m.postTranslate(bitmap.getWidth(), 0);
         }
-
+        ImageView v = (ImageView)findViewById(R.id.bear);
         v.setImageMatrix(m);
-        v.setImageDrawable(d);
+        v.setImageBitmap(bitmap);
     }
 
     private void setBearActive(boolean value)
@@ -117,9 +169,20 @@ public class EncounterActivity extends Activity
         checkBearAnimation();
     }
 
-    private synchronized void checkBearAnimation()
+    private void checkBearAnimation()
     {
         if (this.bearActive && this.bearFocus) {
+            if (prepareAnimation()) {
+                setAnimationRunning(true);
+            }
+        } else {
+            setAnimationRunning(false);
+        }
+    }
+
+    private synchronized void setAnimationRunning(boolean enable)
+    {
+        if (enable) {
             // start animation.
             if (this.animationTimer != null) {
                 this.animationTimer.cancel();
@@ -127,7 +190,6 @@ public class EncounterActivity extends Activity
             this.animationTimer = new Timer(false);
             this.animationTimer.schedule(new AnimationTask(),
                     ANIMATION_DELAY, ANIMATION_PERIOD);
-            setBearImage(R.drawable.bear01a, false);
         } else {
             // stop animation.
             if (this.animationTimer != null) {
@@ -139,9 +201,63 @@ public class EncounterActivity extends Activity
 
     private void updateBear()
     {
-        int index = this.random.nextInt(BEAR_IMAGES.length);
-        boolean reverse = this.random.nextBoolean();
-        setBearImage(BEAR_IMAGES[index], reverse);
+        int len = this.bearBitmaps != null ? this.bearBitmaps.length : 0;
+        if (len == 0) {
+            return;
+        }
+
+        int index = this.lastIndex;
+        boolean reverse = this.lastReverse;
+        while (index == this.lastIndex && reverse == this.lastReverse) {
+            index = this.random.nextInt(len);
+            reverse = this.random.nextBoolean();
+        }
+        this.lastIndex = index;
+        this.lastReverse = reverse;
+
+        setBearBitmap(this.bearBitmaps[index], reverse);
+        Log.v(TAG, "#updateBear index=" + index + " reverse=" + reverse);
+    }
+
+    private synchronized boolean prepareAnimation()
+    {
+        if (this.bearBitmaps != null) {
+            return true;
+        }
+        this.bearBitmaps = new Bitmap[0];
+        PrepareBearTask task = new PrepareBearTask();
+        task.execute(BEAR_IMAGES);
+        return false;
+    }
+
+    private Bitmap loadBitmap(int id) throws InterruptedException
+    {
+        BitmapDrawable d = (BitmapDrawable)getResources().getDrawable(id);
+        int srcW = d.getMinimumWidth();
+        int srcH = d.getMinimumHeight();
+
+        ImageView v = (ImageView)findViewById(R.id.bear);
+        int dstW = v.getWidth();
+        int dstH = v.getHeight();
+
+        int x = 0;
+        int y = 0;
+        int w = dstW;
+        int h = dstH;
+        if (srcW * dstH < srcH * dstW) {
+            w = srcW * dstH / srcH;
+            x = (dstW - w) / 2;
+        } else {
+            h = srcH * dstW / srcW;
+            y = (dstH - h) / 2;
+        }
+
+        Bitmap b = Bitmap.createBitmap(dstW, dstH, Bitmap.Config.RGB_565);
+        Canvas c = new Canvas(b);
+        d.setAntiAlias(true);
+        d.setBounds(x, y, x + w, y + h);
+        d.draw(c);
+        return b;
     }
 
 }
