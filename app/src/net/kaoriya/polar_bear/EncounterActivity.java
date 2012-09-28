@@ -216,7 +216,6 @@ public class EncounterActivity extends Activity
         this.lastReverse = reverse;
 
         setBearBitmap(this.bearBitmaps[index], reverse);
-        Log.v(TAG, "#updateBear index=" + index + " reverse=" + reverse);
     }
 
     private synchronized boolean prepareAnimation()
