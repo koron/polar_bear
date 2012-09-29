@@ -13,6 +13,8 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +35,14 @@ public class EncounterActivity extends Activity
         R.drawable.bear03a,
         R.drawable.bear04a,
         R.drawable.bear05a,
+    };
+
+    private final static int[] BEAR_SOUNDEFFECTS = new int[] {
+        R.raw.se_clock,
+        R.raw.se_kasha,
+        R.raw.se_kah,
+        R.raw.se_karan,
+        R.raw.se_powa,
     };
 
     class AnimationTask extends TimerTask
@@ -62,12 +72,8 @@ public class EncounterActivity extends Activity
         @Override
         protected Bitmap[] doInBackground(int[]... args) {
             try {
-                int[] ids = args[0];
-                Bitmap[] bitmaps = new Bitmap[ids.length];
-                for (int i = 0, I = ids.length; i < I; ++i) {
-                    bitmaps[i] = loadBitmap(ids[i]);
-                }
-                return bitmaps;
+                prepareSounds();
+                return prepareBitmaps(args[0]);
             } catch (InterruptedException e) {
                 return null;
             }
@@ -115,6 +121,12 @@ public class EncounterActivity extends Activity
     private int lastIndex = -1;
 
     private boolean lastReverse = false;
+
+    private SoundPool soundPool = null;
+
+    private int[] soundIds = null;
+
+    private int soundFrame = 0;
 
     /** Called when the activity is first created. */
     @Override
@@ -206,6 +218,7 @@ public class EncounterActivity extends Activity
             return;
         }
 
+        // Determine a bear image to show.
         int index = this.lastIndex;
         boolean reverse = this.lastReverse;
         while (index == this.lastIndex && reverse == this.lastReverse) {
@@ -215,6 +228,18 @@ public class EncounterActivity extends Activity
         this.lastIndex = index;
         this.lastReverse = reverse;
 
+        // Determine a sound effect.
+        int soundIndex = 0;
+        int soundPriority = 0;
+        int soundMax = this.soundIds.length - 1;
+        this.soundFrame = (this.soundFrame + 1) % soundMax;
+        if (this.soundFrame == 0) {
+            soundIndex = this.random.nextInt(soundMax) + 1;
+            soundPriority = 1;
+        }
+
+        this.soundPool.play(this.soundIds[soundIndex], 1f, 1f,
+                0, 0, 1f);
         setBearBitmap(this.bearBitmaps[index], reverse);
     }
 
@@ -257,6 +282,39 @@ public class EncounterActivity extends Activity
         d.setBounds(x, y, x + w, y + h);
         d.draw(c);
         return b;
+    }
+
+    private void prepareSounds() throws InterruptedException
+    {
+        if (this.soundPool != null) {
+            return;
+        }
+        this.soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        this.soundPool.setOnLoadCompleteListener(
+                new SoundPool.OnLoadCompleteListener()
+        {
+            public void onLoadComplete(
+                SoundPool soundPool,
+                int sampleId,
+                int status)
+            {
+            }
+        });
+        this.soundIds = new int[BEAR_SOUNDEFFECTS.length];
+        for (int i = 0, I = BEAR_IMAGES.length; i < I; ++i) {
+            this.soundIds[i] = this.soundPool.load(this,
+                    BEAR_SOUNDEFFECTS[i], 1);
+        }
+        // TODO: wait to complete to load sound effects.
+    }
+
+    private Bitmap[] prepareBitmaps(int[] ids) throws InterruptedException
+    {
+        Bitmap[] bitmaps = new Bitmap[ids.length];
+        for (int i = 0, I = ids.length; i < I; ++i) {
+            bitmaps[i] = loadBitmap(ids[i]);
+        }
+        return bitmaps;
     }
 
 }
