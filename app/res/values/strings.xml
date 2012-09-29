@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">Polar Bear</string>
+  <string name="app_name">Polar Bear does</string>
   <string name="prepare_title">Wait a moment.</string>
-  <string name="prepare_message">Now loading resources.</string>
+  <string name="prepare_message">Now polar bear is preparing...</string>
   <string name="bear_image">Polar Bear Image</string>
 </resources>
