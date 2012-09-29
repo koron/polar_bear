@@ -238,7 +238,7 @@ public class EncounterActivity extends Activity
         }
 
         this.soundPool.play(this.soundIds[soundIndex], 1f, 1f,
-                0, 0, 1f);
+                soundPriority, 0, 1f);
         setBearBitmap(this.bearBitmaps[index], reverse);
     }
 
