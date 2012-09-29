@@ -197,6 +197,7 @@ public class EncounterActivity extends Activity
             if (this.animationTimer != null) {
                 this.animationTimer.cancel();
             }
+            this.soundFrame = 0;
             this.animationTimer = new Timer(false);
             this.animationTimer.schedule(new AnimationTask(),
                     ANIMATION_DELAY, ANIMATION_PERIOD);
