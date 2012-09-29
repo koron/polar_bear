@@ -23,7 +23,7 @@ public class EncounterActivity extends Activity
     implements PolarBear
 {
 
-    public final static long ANIMATION_DELAY = 0;
+    public final static long ANIMATION_DELAY = 300;
 
     public final static long ANIMATION_PERIOD = 600;
 
