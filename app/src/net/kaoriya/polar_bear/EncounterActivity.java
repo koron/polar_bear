@@ -17,6 +17,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 public class EncounterActivity extends Activity
@@ -139,12 +140,14 @@ public class EncounterActivity extends Activity
     {
         super.onResume();
         setBearActive(true);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
     public void onPause()
     {
         super.onPause();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setBearActive(false);
     }
 
