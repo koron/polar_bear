@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">北極グマが</string>
+  <string name="app_name">シロクマが</string>
   <string name="prepare_title">少し待ってね</string>
-  <string name="prepare_message">北極グマが準備中だよ</string>
-  <string name="bear_image">北極グマの画像</string>
+  <string name="prepare_message">シロクマが準備中だよ</string>
+  <string name="bear_image">シロクマの画像</string>
 </resources>
