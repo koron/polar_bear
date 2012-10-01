@@ -66,6 +66,7 @@ public class EncounterActivity extends Activity
             this.dialog = ProgressDialog.show(EncounterActivity.this,
                     getString(R.string.prepare_title),
                     getString(R.string.prepare_message), true, true, this);
+            this.dialog.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         }
 
         @Override
