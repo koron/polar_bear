@@ -133,6 +133,7 @@ public class EncounterActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.encounter);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     @Override
