@@ -238,6 +238,7 @@ public class EncounterActivity extends Activity
         this.soundFrame = (this.soundFrame + 1) % soundMax;
         if (this.soundFrame == 0) {
             soundIndex = this.random.nextInt(soundMax) + 1;
+            soundPriority = 1;
         }
 
         this.soundPool.play(this.soundIds[soundIndex], 1f, 1f,
