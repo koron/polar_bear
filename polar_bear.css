@@ -1,0 +1,68 @@
+/* vim:set ts=8 sts=2 sw=2 tw=0: */
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background-color: #000;
+  margin: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+div#stage {
+  width: 100%;
+  height: 100%;
+}
+
+div#bears {
+  position: relative;
+  top: 40px;
+  margin: 0px auto;
+  width: 616px;
+  height: 720px;
+}
+
+img.bear_image {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  visibility: hidden;
+}
+
+div#control_panel {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+}
+
+div#control_mute {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.toggle_button {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  visibility: hidden;
+}
+
+.toggle_button.default {
+  visibility: visible;
+}
+
+div#social_widgets {
+  position: absolute;
+  right: 0px;
+  top: 8px;
+}
+
+div.social_widget {
+  display: inline;
+  margin: 0px 4px;
+}
