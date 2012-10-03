@@ -3,6 +3,8 @@
 window.onload = function()
 {
   start();
+  muteButton = document.getElementById('control_mute');
+  muteButton.onclick = function () { toggleSound(); }
 }
 
 var imgIds = [ 'bear1', 'bear2', 'bear3', 'bear4', 'bear5' ];
@@ -13,6 +15,8 @@ var shown = null;
 var lastIndex = -1;
 var lastReverse = false;
 var soundFrame = 0;
+var soundEnabled = true;
+var muteButton = undefined;
 
 function start()
 {
@@ -39,7 +43,9 @@ function updateBear()
     soundIndex = Math.floor(Math.random() * soundMax) + 1;
   }
 
-  playSound(soundIndex);
+  if (soundEnabled) {
+    playSound(soundIndex);
+  }
   showBear(index, reverse);
 }
 
@@ -63,5 +69,22 @@ function showBear(index, flipH)
   } else {
     shown.style['-webkit-transform'] = 'scale(1, 1)';
     shown.style['-moz-transform'] = 'scale(1, 1)';
+  }
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  if (muteButton == undefined) {
+    return;
+  }
+  var nodes = muteButton.getElementsByTagName('img');
+  var imgSpeaker = nodes[0];
+  var imgMute = nodes[1];
+  if (soundEnabled) {
+    imgSpeaker.style.visibility = 'visible';
+    imgMute.style.visibility = 'hidden';
+  } else {
+    imgSpeaker.style.visibility = 'hidden';
+    imgMute.style.visibility = 'visible';
   }
 }

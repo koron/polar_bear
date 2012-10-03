@@ -32,6 +32,30 @@ img.bear_image {
   visibility: hidden;
 }
 
+div#control_panel {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+}
+
+div#control_mute {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.toggle_button {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  visibility: hidden;
+}
+
+.toggle_button.default {
+  visibility: visible;
+}
+
 div#social_widgets {
   position: absolute;
   right: 0px;
