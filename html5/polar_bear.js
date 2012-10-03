@@ -2,14 +2,45 @@
 
 window.onload = function()
 {
-  setInterval(updateBear, 600);
+  //prepareAudio();
+  start();
 }
 
 var ids = [ '#bear1', '#bear2', '#bear3', '#bear4', '#bear5' ];
-var shown = null;
+var audios = [
+  new Audio('sounds/se_clock.ogg'),
+  new Audio('sounds/se_kah.ogg'),
+  new Audio('sounds/se_karan.ogg'),
+  new Audio('sounds/se_kasha.ogg'),
+  new Audio('sounds/se_powa.ogg')
+];
 
+var intervalId = undefined;
+var shown = null;
 var lastIndex = -1;
 var lastReverse = false;
+var soundFrame = 0;
+
+function prepareAudio() {
+  var count = 0;
+  for (var i = 0; i < audios.length; ++i) {
+    var audio = audios[i];
+    console.log('#'+i + ' ' +audio);
+    audio.onload = function() {
+      console.log(audio.src);
+      ++count;
+      if (count >= audios.length) {
+	start();
+      }
+    };
+  }
+}
+function start()
+{
+  if (!intervalId) {
+    intervalId = setInterval(updateBear, 600);
+  }
+}
 
 function updateBear()
 {
@@ -21,6 +52,16 @@ function updateBear()
   }
   lastIndex = index;
   lastReverse = reverse;
+
+  var soundIndex = 0;
+  var soundMax = audios.length - 1;
+  soundFrame = (soundFrame + 1) % soundMax;
+  if (soundFrame == 0) {
+    soundIndex = Math.floor(Math.random() * soundMax) + 1;
+  }
+
+  var audio = audios[soundIndex];
+  audio.play();
   showBear(index, reverse);
 }
 
