@@ -31,3 +31,14 @@ img.bear_image {
   top: 0px;
   visibility: hidden;
 }
+
+div#social_widgets {
+  position: absolute;
+  right: 0px;
+  top: 8px;
+}
+
+div.social_widget {
+  display: inline;
+  margin: 0px 4px;
+}
