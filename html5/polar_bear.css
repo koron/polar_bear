@@ -1,0 +1,33 @@
+/* vim:set ts=8 sts=2 sw=2 tw=0: */
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background-color: #000;
+  margin: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+div#stage {
+  width: 100%;
+  height: 100%;
+}
+
+div#bears {
+  position: relative;
+  top: 100px;
+  margin: 0px auto;
+  width: 616px;
+  height: 720px;
+}
+
+img.bear_image {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  visibility: hidden;
+}
