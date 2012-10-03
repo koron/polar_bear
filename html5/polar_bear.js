@@ -2,18 +2,11 @@
 
 window.onload = function()
 {
-  //prepareAudio();
   start();
 }
 
-var ids = [ '#bear1', '#bear2', '#bear3', '#bear4', '#bear5' ];
-var audios = [
-  new Audio('sounds/se_clock.ogg'),
-  new Audio('sounds/se_kah.ogg'),
-  new Audio('sounds/se_karan.ogg'),
-  new Audio('sounds/se_kasha.ogg'),
-  new Audio('sounds/se_powa.ogg')
-];
+var imgIds = [ '#bear1', '#bear2', '#bear3', '#bear4', '#bear5' ];
+var audioIds = [ 'se1', 'se2', 'se3', 'se4', 'se5' ];
 
 var intervalId = undefined;
 var shown = null;
@@ -21,20 +14,6 @@ var lastIndex = -1;
 var lastReverse = false;
 var soundFrame = 0;
 
-function prepareAudio() {
-  var count = 0;
-  for (var i = 0; i < audios.length; ++i) {
-    var audio = audios[i];
-    console.log('#'+i + ' ' +audio);
-    audio.onload = function() {
-      console.log(audio.src);
-      ++count;
-      if (count >= audios.length) {
-	start();
-      }
-    };
-  }
-}
 function start()
 {
   if (!intervalId) {
@@ -47,27 +26,32 @@ function updateBear()
   var index = lastIndex;
   var reverse = lastReverse;
   while (index == lastIndex && reverse == lastReverse) {
-    index = Math.floor(Math.random() * ids.length);
+    index = Math.floor(Math.random() * imgIds.length);
     reverse = Math.random() < 0.5;
   }
   lastIndex = index;
   lastReverse = reverse;
 
   var soundIndex = 0;
-  var soundMax = audios.length - 1;
+  var soundMax = audioIds.length - 1;
   soundFrame = (soundFrame + 1) % soundMax;
   if (soundFrame == 0) {
     soundIndex = Math.floor(Math.random() * soundMax) + 1;
   }
 
-  var audio = audios[soundIndex];
-  audio.play();
+  playSound(soundIndex);
   showBear(index, reverse);
+}
+
+function playSound(index)
+{
+  var audio = document.getElementById(audioIds[index]);
+  audio.play();
 }
 
 function showBear(index, flipH)
 {
-  var id = ids[index];
+  var id = imgIds[index];
   if (shown != null) {
     shown.css('visibility', 'hidden');
   }
