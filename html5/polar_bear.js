@@ -5,7 +5,7 @@ window.onload = function()
   start();
 }
 
-var imgIds = [ '#bear1', '#bear2', '#bear3', '#bear4', '#bear5' ];
+var imgIds = [ 'bear1', 'bear2', 'bear3', 'bear4', 'bear5' ];
 var audioIds = [ 'se1', 'se2', 'se3', 'se4', 'se5' ];
 
 var intervalId = undefined;
@@ -52,16 +52,16 @@ function playSound(index)
 function showBear(index, flipH)
 {
   var id = imgIds[index];
-  if (shown != null) {
-    shown.css('visibility', 'hidden');
+  if (shown != undefined) {
+    shown.style.visibility = 'hidden';
   }
-  shown = $(id);
-  shown.css('visibility', 'visible');
+  shown = document.getElementById(id);
+  shown.style.visibility = 'visible';
   if (flipH) {
-    shown.css('-webkit-transform', 'scale(-1, 1)')
-    shown.css('-moz-transform', 'scale(-1, 1)')
+    shown.style['-webkit-transform'] = 'scale(-1, 1)';
+    shown.style['-moz-transform'] = 'scale(-1, 1)';
   } else {
-    shown.css('-webkit-transform', 'scale(1, 1)')
-    shown.css('-moz-transform', 'scale(1, 1)')
+    shown.style['-webkit-transform'] = 'scale(1, 1)';
+    shown.style['-moz-transform'] = 'scale(1, 1)';
   }
 }
